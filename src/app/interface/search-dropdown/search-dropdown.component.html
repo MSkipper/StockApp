@@ -1,0 +1,12 @@
+<div class="search-bar-container"><span class="icon glyphicon glyphicon-search"></span>
+  <input type="text" placeholder="Click or type..." [(ngModel)]="inputModel"
+         (ngModelChange)="onChange($event)" (click)="openDropdown($event)" [className]="dropdownHandlerClass">
+  <div class="results-input">
+    <ul class="dropDown-container">
+      <li *ngFor="let item of itemsList" (click)="select($event, item)"><a>{{ item }}</a></li>
+    </ul>
+  </div>
+  <div class="results-search">
+
+  </div>
+</div>

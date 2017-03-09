@@ -1,0 +1,12 @@
+.d3-chart {
+  width: 100%;
+  height: 400px;
+  padding: 10px;
+}
+
+.line {
+  margin-left: 70px;
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 2px;
+}

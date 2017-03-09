@@ -1,0 +1,11 @@
+<div>
+  <div class="window">
+    <app-linear-chart [data]="linearGraphData"></app-linear-chart>
+  </div>
+  <div class="window">
+    <app-company-details [companyData] = "queryCompanyData"></app-company-details>
+   </div>
+  <div class="window">
+    <app-stock-table [historicalData]="linearGraphData "></app-stock-table>
+  </div>
+</div>
