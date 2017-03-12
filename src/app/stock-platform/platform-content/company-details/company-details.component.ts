@@ -7,11 +7,17 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class CompanyDetailsComponent implements OnInit {
 
-  @Input() private companyData: any;
-
+  @Input() private companyInfo: any;
+  private address: string
   constructor() { }
 
   ngOnInit() {
+  }
+
+  ngOnChanges() {
+    if (this.companyInfo) {
+      this.address = this.companyInfo.assetProfile.address1d
+    }
   }
 
 }

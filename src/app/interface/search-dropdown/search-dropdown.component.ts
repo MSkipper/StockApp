@@ -21,6 +21,10 @@ export class SearchDropdownComponent implements OnInit {
 
   }
 
+  hideDropdownArea(_event: Event) {
+    this.dropdownHandlerClass = 'is-close';
+  }
+
   openDropdown(_event: Event) {
     if (this.dropdownHandlerClass !== 'is-open') {
       this.dropdownHandlerClass = 'is-open';
@@ -30,9 +34,10 @@ export class SearchDropdownComponent implements OnInit {
   }
 
   select(_event: Event, selectedItem: any) {
-    this.inputModel = selectedItem;
-    this.onSelect(selectedItem)
-    this.dropdownHandlerClass = 'is-close';
+    if (selectedItem !== this.inputModel) {
+      this.inputModel = selectedItem;
+      this.onSelect(selectedItem)
+    }
   }
 
   onChange(_event: Event) {

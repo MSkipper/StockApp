@@ -1,6 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
-
-
+import {Component, OnInit, Output, EventEmitter} from '@angular/core';
 
 @Component({
   selector: 'app-nav-filters',
@@ -12,7 +10,7 @@ import { Component, OnInit, Input } from '@angular/core';
 export class NavFiltersComponent implements OnInit {
   selectedQueryType: string;
   exampleSymbolsList: Array<string> = ['YHOO', 'GOOG', 'DIS'];
-  @Input() onQueryParamChange: (symbol: string) => void;
+  @Output() onQueryParamChange = new EventEmitter();
 
   constructor() {
 
@@ -23,7 +21,7 @@ export class NavFiltersComponent implements OnInit {
   }
 
   onSymbolSelect = (selectedItem)  => {
-    this.onQueryParamChange(selectedItem);
+    this.onQueryParamChange.emit(selectedItem);
   }
 
   ngOnInit() {

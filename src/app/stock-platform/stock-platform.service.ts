@@ -21,24 +21,15 @@ export class StockPlatformService {
 
     return this.http.get(url).map(this.extractHistoricalData).catch(this.handleError);
   }
+
   public queryCompanyData = (symbol: string) => {
-    const financeDataQuery = 'select * from pm.finance where symbol = ' + symbol;
-    const url = 'https://query.yahooapis.com/v1/yql?' + encodeURIComponent(financeDataQuery) +
-        '&format=json&diagnostics=true&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=';
+    const financeDataQueryUrl = 'http://query2.finance.yahoo.com/v10/finance/quoteSummary/' + symbol +
+      '?formatted=true&crumb=.PdIQSwin8d&lang=en-US&region=US&modules=assetProfile%2CsecFilings%2CcalendarEvents&corsDomain=finance.yahoo.com';
 
-    const headers = new Headers();
-    StockPlatformService.createAuthorizationHeader(headers);
-    return this.http.get(url, {
-      headers: headers
-    } ).map(this.extractFinancialData).catch(this.handleError);
+    return this.http.get(financeDataQueryUrl).map(this.extractFinancialData).catch(this.handleError);
   }
 
-  private static createAuthorizationHeader(headers: Headers) {
-    headers.append('Authorization', 'Bearer 0c038dd27f90d9243405adad67f74b6671c93285');
-  }
-
-  constructor(private http: Http) {
-  }
+  constructor(private http: Http) {}
 
   private extractFinancialData = (response: Response) => {
     const body = response.json();
@@ -51,7 +42,6 @@ export class StockPlatformService {
   }
 
   private handleError = (error: Response | any) => {
-    console.log(error)
     let errMsg: string;
     if (error instanceof Response) {
       const body = error.json() || '';

@@ -1,1 +1,8 @@
-
+<div>
+  <div *ngIf="companyInfo">
+    <p>Address: {{ address }}</p>
+  </div>
+  <div *ngIf="!companyInfo">
+    <p>Company info should be here...</p>
+  </div>
+</div>

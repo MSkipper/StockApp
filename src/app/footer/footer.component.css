@@ -1,6 +1,8 @@
 .footer {
   background-color: azure;
-  min-height: 100px;
-  padding: 50px 30px;
+  height: 30px;
+  margin: 24px 0 0 0;
+  bottom: 0;
+  padding: 12px;
   text-align: right;
 }

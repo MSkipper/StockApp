@@ -1,11 +1,21 @@
 <div>
-  <div class="window">
-    <app-linear-chart [data]="linearGraphData"></app-linear-chart>
+  <div *ngIf="queryData">
+    <div class="col-md-8">
+      <app-linear-chart [data]="linearGraphData"></app-linear-chart>
+    </div>
+    <div class="col-md-4">
+      <app-company-details [companyInfo]="companyInfo"></app-company-details>
+    </div>
+    <div class="col-md-12">
+      <app-stock-table [historicalData]="linearGraphData "></app-stock-table>
+    </div>
+    <div class="col-md-6">
+      <app-candlestick-chart></app-candlestick-chart>
+    </div>
   </div>
-  <div class="window">
-    <app-company-details [companyData] = "queryCompanyData"></app-company-details>
-   </div>
-  <div class="window">
-    <app-stock-table [historicalData]="linearGraphData "></app-stock-table>
+  <div class="on-init container" *ngIf="!queryData">
+    <h1>Please select symbol from search bar...</h1>
   </div>
+    <div class="preload" *ngIf="dataLoading">
+    </div>
 </div>

@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule, JsonpModule } from '@angular/http';
 import { AppComponent } from './app.component';
 import { RouterModule} from '@angular/router';
-import { DatepickerModule } from 'ng2-bootstrap';
 
 import { StockPlatformComponent } from './stock-platform/stock-platform.component';
 import { NavFiltersComponent } from './stock-platform/nav-filters/nav-filters.component';
@@ -35,8 +34,7 @@ import { SearchDropdownComponent } from './interface/search-dropdown/search-drop
     FormsModule,
     HttpModule,
     JsonpModule,
-    RouterModule,
-    DatepickerModule.forRoot()
+    RouterModule
   ],
   providers: [],
   bootstrap: [AppComponent]

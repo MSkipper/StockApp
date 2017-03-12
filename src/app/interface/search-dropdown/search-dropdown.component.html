@@ -2,7 +2,7 @@
   <input type="text" placeholder="Click or type..." [(ngModel)]="inputModel"
          (ngModelChange)="onChange($event)" (click)="openDropdown($event)" [className]="dropdownHandlerClass">
   <div class="results-input">
-    <ul class="dropDown-container">
+    <ul class="dropDown-container" (click)="hideDropdownArea($event)">
       <li *ngFor="let item of itemsList" (click)="select($event, item)"><a>{{ item }}</a></li>
     </ul>
   </div>

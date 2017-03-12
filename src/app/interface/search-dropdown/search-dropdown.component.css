@@ -53,16 +53,23 @@
   position: relative;
   border: none;
   text-transform: lowercase;
-  padding: 10px;
+  padding: 10px 10px 10px 40px;
   outline: none;
-  margin-left: 30px;
   font-size: 22px;
   box-shadow: none;
 }
 
-.dropDown-container li {
-  text-transform: none;
+.dropDown-container li{
   padding: 24px 16px 0;
-  color: black;
   cursor: pointer;
 }
+
+.dropDown-container li a{
+  color: black;
+  text-decoration: none;
+}
+
+.dropDown-container li:hover a{
+  color: darkblue;
+}
+
