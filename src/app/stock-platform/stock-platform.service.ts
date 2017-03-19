@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import {Http, Response, Headers} from '@angular/http';
+import {Http, Response} from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 
 import 'rxjs/add/operator/catch';
@@ -22,19 +22,19 @@ export class StockPlatformService {
     return this.http.get(url).map(this.extractHistoricalData).catch(this.handleError);
   }
 
-  public queryCompanyData = (symbol: string) => {
-    const financeDataQueryUrl = 'http://query2.finance.yahoo.com/v10/finance/quoteSummary/' + symbol +
-      '?formatted=true&crumb=.PdIQSwin8d&lang=en-US&region=US&modules=assetProfile%2CsecFilings%2CcalendarEvents&corsDomain=finance.yahoo.com';
-
-    return this.http.get(financeDataQueryUrl).map(this.extractFinancialData).catch(this.handleError);
-  }
+  // public queryCompanyData = (symbol: string) => {
+  //   const financeDataQueryUrl = 'http://query2.finance.yahoo.com/v10/finance/quoteSummary/' + symbol +
+  //     '?formatted=true&crumb=.PdIQSwin8d&lang=en-US&region=US&modules=assetProfile%2CsecFilings%2CcalendarEvents&corsDomain=finance.yahoo.com';
+  //
+  //   return this.http.get(financeDataQueryUrl).map(this.extractFinancialData).catch(this.handleError);
+  // }
 
   constructor(private http: Http) {}
 
-  private extractFinancialData = (response: Response) => {
-    const body = response.json();
-    return body.query || { };
-  }
+  // private extractFinancialData = (response: Response) => {
+  //   const body = response.json();
+  //   return body.query || { };
+  // }
 
   private extractHistoricalData = (response: Response) => {
     const body = response.json();

@@ -1,4 +1,6 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import {IQuote, IQueryHistoricalApiData} from '../query-data.interface';
+
 
 @Component({
   selector: 'app-platform-content',
@@ -7,9 +9,9 @@ import { Component, OnInit, Input, OnChanges } from '@angular/core';
 })
 export class PlatformContentComponent implements OnInit, OnChanges {
 
-  @Input() private queryData: any;
+  @Input() private queryData: IQueryHistoricalApiData;
   @Input() private companyInfoData: any;
-  private linearGraphData: any;
+  private linearGraphData: Array<IQuote>;
   private companyInfo: any;
 
   constructor() {
@@ -19,12 +21,12 @@ export class PlatformContentComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    if(this.queryData) {
+    if (this.queryData) {
       this.linearGraphData = this.queryData.results.quote;
     }
-    if(this.companyInfoData) {
-      this.companyInfo = this.companyInfoData.quoteSummary.results[0]
-    }
+    // if (this.companyInfoData) {
+    //   this.companyInfo = this.companyInfoData.quoteSummary.results[0];
+    // }
 
   }
 }

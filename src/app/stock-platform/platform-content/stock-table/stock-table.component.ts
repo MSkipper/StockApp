@@ -1,4 +1,5 @@
 import {Component, OnInit, Input, OnChanges} from '@angular/core';
+import {IQuote} from '../../query-data.interface';
 
 @Component({
   selector: 'app-stock-table',
@@ -7,7 +8,7 @@ import {Component, OnInit, Input, OnChanges} from '@angular/core';
 })
 export class StockTableComponent implements OnInit, OnChanges {
 
-  @Input() private historicalData;
+  @Input() private historicalData: Array<IQuote>;
 
   constructor() {
 

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {StockPlatformService} from './stock-platform.service';
+import {IQueryHistoricalApiData} from "./query-data.interface";
 
 @Component({
   selector: 'app-stock-platform',
@@ -9,14 +10,15 @@ import {StockPlatformService} from './stock-platform.service';
 })
 export class StockPlatformComponent implements OnInit {
 
-  private queryHistoryData: any;
-  private queryCompanyData: any;
+  private queryHistoricalData: IQueryHistoricalApiData;
   private companyInfoData: any;
+  private isQueryLoading: boolean;
 
   private setNewQuery =  (symbol): void => {
-
+    this.isQueryLoading = true;
     this.StockPlatformService.queryHistoricalData(symbol).subscribe(data => {
-      this.queryHistoryData = data;
+      this.queryHistoricalData = data;
+      this.isQueryLoading = false;
     });
 
     // Problem with cross-origin

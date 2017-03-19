@@ -1,5 +1,5 @@
 <div class="search-bar-container"><span class="icon glyphicon glyphicon-search"></span>
-  <input type="text" placeholder="Click or type..." [(ngModel)]="inputModel"
+  <input type="text" placeholder="{{ placeholder}}" [(ngModel)]="inputModel"
          (ngModelChange)="onChange($event)" (click)="openDropdown($event)" [className]="dropdownHandlerClass">
   <div class="results-input">
     <ul class="dropDown-container" (click)="hideDropdownArea($event)">

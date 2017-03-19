@@ -1,3 +1,7 @@
 <app-nav-filters (onQueryParamChange)="setNewQuery($event)"></app-nav-filters>
-<app-platform-content [queryData]="queryHistoryData" [companyInfoData]="companyInfo"></app-platform-content>
-
+<app-platform-content [queryData]="queryHistoricalData" [companyInfoData]="companyInfo" *ngIf="!isQueryLoading">
+</app-platform-content >
+<div class="loader-wrapper">
+<div class="loader" *ngIf="isQueryLoading">
+</div>
+</div>
