@@ -23,6 +23,7 @@ export class StockPlatformComponent implements OnInit {
 
     // Problem with cross-origin
     // this.StockPlatformService.queryCompanyData(symbol).subscribe(data => {
+    //   console.log(data)
     //   this.companyInfoData = data;
     // });
   }

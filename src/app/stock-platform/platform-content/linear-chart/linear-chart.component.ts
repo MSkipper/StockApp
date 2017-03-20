@@ -1,11 +1,13 @@
 import {
   Component, OnInit, OnChanges, ViewChild, ElementRef, Input,
-  ViewEncapsulation, HostListener, Output
+  ViewEncapsulation, HostListener
 } from '@angular/core';
 import * as d3 from 'd3';
 import {IQuote} from '../../query-data.interface';
 import {Axis} from "d3-axis";
 import {ScaleTime, ScaleLinear} from "d3-scale";
+import {ContainerElement} from "d3-selection";
+import {Bisector} from "d3-array";
 
 interface IChartMargin {
   top: number
@@ -20,27 +22,26 @@ interface IChartMargin {
   styleUrls: ['./linear-chart.component.css'],
   encapsulation: ViewEncapsulation.None
 })
-export class LinearChartComponent implements OnInit, OnChanges {
+export class LinearChartComponent implements OnInit {
 
   @ViewChild('chart') private chartContainer: ElementRef;
-  @Input() private data: Array<IQuote>;
+  @Input() private queryData: Array<IQuote>;
   private margin: IChartMargin = { top: 20, right: 20, bottom: 50, left: 70 };
   private chart: any;
   private width: number;
   private height: number;
-  private x: ScaleTime<number, number>;
-  private y: ScaleLinear<number, number>;
+  private xScale: ScaleTime<number, number>;
+  private yScale: ScaleLinear<number, number>;
   private lineValue: any;
   private xAxis: Axis<any>;
   private yAxis: Axis<any>;
   private svg: any;
-  private resizeChart: (event: Event) => void;
   private readonly scaleModifier = 5;
   constructor() {
 
   }
   @HostListener('window:resize', ['$event'])
-  onResize(event) {
+  onResize(_event) {
     this.createChart();
     this.updateChart();
   }
@@ -48,61 +49,50 @@ export class LinearChartComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.initChart();
     this.createChart();
-    if (this.data) {
-      this.updateChart();
-    }
-  }
-
-  ngOnChanges() {
-    if (this.chart) {
+    if (this.queryData) {
       this.updateChart();
     }
   }
 
   initChart() {
     this.svg = d3.select(this.chartContainer.nativeElement).append('svg');
-    this.chart = this.svg.append('g');
   }
 
   createChart() {
-    const element = this.chartContainer.nativeElement;
-    this.width = element.offsetWidth - this.margin.left - this.margin.right;
-    this.height = element.offsetHeight - this.margin.top - this.margin.bottom;
+    const chartElement = this.chartContainer.nativeElement;
+    this.width = chartElement.offsetWidth - this.margin.left - this.margin.right;
+    this.height = chartElement.offsetHeight - this.margin.top - this.margin.bottom;
 
     this.svg
-      .attr('width', element.offsetWidth)
-      .attr('height', element.offsetHeight);
+      .attr('width', chartElement.offsetWidth)
+      .attr('height', chartElement.offsetHeight);
 
-    this.chart
-      .attr('class', 'linear')
-      .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`);
+    this.xScale = d3.scaleTime().range([0, this.width]);
+    this.yScale = d3.scaleLinear().range([this.height, 0]);
+    this.xAxis = d3.axisBottom(this.xScale);
+    this.yAxis = d3.axisLeft(this.yScale);
 
-    this.x = d3.scaleTime().range([0, this.width]);
-    this.y = d3.scaleLinear().range([this.height, 0]);
-    this.xAxis = d3.axisBottom(this.x);
-    this.yAxis = d3.axisLeft(this.y);
-
-    this.lineValue = d3.line<any>()
-      .x((d) => this.x(d.Date))
-      .y((d) => this.y(d.Close));
+    this.lineValue = d3.line<Number | any>()
+      .x((d) => this.xScale(d.Date))
+      .y((d) => this.yScale(d.Close));
   }
 
   updateChart() {
     this.svg.selectAll('*').remove();
     d3.select('.graph-tooltip').remove();
 
-    this.data.forEach((d) => {
-      d.Date = new Date(d.Date);
-      d.Close = Number(d.Close);
+    this.queryData.forEach((quote) => {
+      quote.Date = new Date(quote.Date);
+      quote.Close = Number(quote.Close);
     });
 
-    this.data.sort((a, b) => (a.Date - b.Date));
-
-    this.x.domain(d3.extent(this.data, d => d.Date));
-    this.y.domain([d3.min(this.data, d => d.Close), d3.max(this.data, d => d.Close) + this.scaleModifier]);
+    this.queryData.sort((a, b) => (a.Date - b.Date));
+    this.xScale.domain(d3.extent(this.queryData, quote => quote.Date));
+    this.yScale.domain([d3.min(this.queryData, quote =>
+      quote.Close - this.scaleModifier), d3.max(this.queryData, quote => quote.Close + this.scaleModifier)]);
 
     this.svg.append('path')
-      .datum(this.data)
+      .datum(this.queryData)
       .attr('transform', `translate(${this.margin.left}, 0)`)
       .attr('class', 'line')
       .attr('d', this.lineValue);
@@ -131,26 +121,29 @@ export class LinearChartComponent implements OnInit, OnChanges {
     .on('mouseout', function() { focus.style('display', 'none'); })
     .on('mousemove', onMouseMove)
     .on('click', onMouseClick);
-    const bisectDate = d3.bisector(function(d: any) { return d.Date; }).left;
-    const formatValue = d3.format(',.2f');
-    const formatCurrency = function(d) { return formatValue(d); };
 
-    const setFocus = (eventElement) => {
-      const x0: any = this.x.invert(d3.mouse(eventElement)[0]),
-        i = bisectDate(this.data, x0, 1),
-        d0 = this.data[i - 1],
-        d1 = this.data[i],
-        d = x0 - d0.Date > d1.Date - x0 ? d1 : d0;
-      focus.attr('transform', 'translate(' + (this.x(d.Date) + this.margin.left) + ',' + this.y(d.Close) + ')');
-      focus.select('text').text(formatCurrency(d.Close));
+    const bisectDate = d3.bisector((Quote: IQuote) => Quote.Date).left;
+    const formatValue = d3.format(',.2f');
+    const formatCurrency = (priceValue) => formatValue(priceValue);
+
+    const setFocus = (containerElement: ContainerElement) => {
+      const positionOfX: Date = this.xScale.invert(d3.mouse(containerElement)[0])
+      const indexOfCurrentData: number = bisectDate(this.queryData, positionOfX, 1);
+      const previousData = this.queryData[indexOfCurrentData - 1];
+      const nextData = this.queryData[indexOfCurrentData];
+      const currentData =
+        Number(positionOfX) - previousData.Date > nextData.Date - Number(positionOfX) ? nextData : previousData;
+      focus.attr('transform', 'translate(' + (this.xScale(currentData.Date) + this.margin.left)
+        + ',' + this.yScale(currentData.Close) + ')');
+      focus.select('text').text(formatCurrency(currentData.Close));
     }
 
     const formatTime = d3.timeFormat('%d-%m-%Y');
 
     const showDetailsOfDay = (eventElement) => {
-      const x0 = this.x.invert(d3.mouse(eventElement)[0]),
-            i = bisectDate(this.data, x0, 1);
-      const currentData = this.data[i];
+      const positionOfX: Date = this.xScale.invert(d3.mouse(eventElement)[0]);
+      const indexOfCurrentData = bisectDate(this.queryData, positionOfX, 1);
+      const currentData = this.queryData[indexOfCurrentData];
       descriptionDiv.transition()
       .duration(200)
       .style('opacity', .9);
@@ -172,8 +165,8 @@ export class LinearChartComponent implements OnInit, OnChanges {
     }
 
     this.svg.append('g')
-      .attr('transform', `translate(${this.margin.left}, ${this.margin.top + this.height})`)
-      .call(d3.axisBottom(this.x).ticks(10).tickFormat(d3.timeFormat('%y-%m-%d')))
+      .attr('transform', `translate(${this.margin.left}, ${ this.height})`)
+      .call(d3.axisBottom(this.xScale).ticks(10).tickFormat(d3.timeFormat('%y-%m-%d')))
       .selectAll('text')
       .style('text-anchor', 'end')
       .attr('dx', '-.8em')
@@ -181,8 +174,8 @@ export class LinearChartComponent implements OnInit, OnChanges {
       .attr('transform', 'rotate(-65)');
 
     this.svg.append('g')
-      .attr('transform', `translate(${this.margin.left}, ${this.margin.top})`)
-      .call(d3.axisLeft(this.y));
+      .attr('transform', `translate(${this.margin.left}, 0)`)
+      .call(d3.axisLeft(this.yScale));
 
     this.svg.append('text')
       .attr('transform', 'rotate(-90)')

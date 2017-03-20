@@ -10,8 +10,8 @@ export interface IQueryHistoricalApiData {
 
 export interface IQuote {
   Adj_Close: string
-  Close: any
-  Date: any
+  Close: string | any
+  Date: string | any
   High: string
   Low: string
   Open: string

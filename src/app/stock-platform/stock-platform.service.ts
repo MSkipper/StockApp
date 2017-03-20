@@ -24,17 +24,17 @@ export class StockPlatformService {
 
   // public queryCompanyData = (symbol: string) => {
   //   const financeDataQueryUrl = 'http://query2.finance.yahoo.com/v10/finance/quoteSummary/' + symbol +
-  //     '?formatted=true&crumb=.PdIQSwin8d&lang=en-US&region=US&modules=assetProfile%2CsecFilings%2CcalendarEvents&corsDomain=finance.yahoo.com';
+  //     '?modules=assetProfile';
   //
   //   return this.http.get(financeDataQueryUrl).map(this.extractFinancialData).catch(this.handleError);
   // }
 
   constructor(private http: Http) {}
 
-  // private extractFinancialData = (response: Response) => {
-  //   const body = response.json();
-  //   return body.query || { };
-  // }
+  private extractFinancialData = (response: Response) => {
+    const body = response.json();
+    return body.query || { };
+  }
 
   private extractHistoricalData = (response: Response) => {
     const body = response.json();
@@ -50,7 +50,7 @@ export class StockPlatformService {
     } else {
       errMsg = error.message ? error.message : error.toString();
     }
-    return Observable.throw(errMsg);
+    return [];
   }
 
 }
